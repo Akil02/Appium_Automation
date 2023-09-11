@@ -3,10 +3,10 @@
 <suite name="Suite">
   <test thread-count="5" name="Test">
     <classes>
-	  <class name="Appium_Executuion.Shopp_AppExecution"/>
-  <!--    <class name="Appium_Executuion.TC002_Execution"/>
-      <class name="Appium_Executuion.TC003_Execution"/>
-      <class name="Appium_Executuion.TC004_Execution"/>    -->
+<!--	  <class name="Appium_Executuion.Shopp_AppExecution"/>
+     <class name="Appium_Executuion.TC002_Execution"/>
+      <class name="Appium_Executuion.TC003_Execution"/>  -->
+      <class name="Appium_Executuion.TC001_Execution"/>    
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->

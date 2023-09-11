@@ -17,17 +17,32 @@ import DemoApp.FirstPage;
 import DemoApp.ViewPage;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Step;
+import io.qameta.allure.Story;
 
 public class TC001_Execution {
 
 	AndroidDriver driver = null;
 	
 	@BeforeClass
+	@Description("Launching the App")
+	@Epic("TC001_TestCase")
+	@Feature("Starting the App")
+	@Story("Checking whether App is getting started")
+	@Step("Open APP Demo app")
 	public void Start1() throws MalformedURLException {
 		driver = new StartBase().Start();
 	}
 	
 	@Test
+	@Description("Validating the steps")
+	@Epic("TC001_TestCase")
+	@Feature("Starting the execution")
+	@Story("Checking whether App functinality is working properly")
+	@Step("Checking whether Chrome is opening inside App Demo")
 	public void Execution() throws Exception {
 		new FirstPage(driver).Views();
 		new ViewPage(driver).WebView3();
@@ -44,6 +59,11 @@ public class TC001_Execution {
 	}
 	
 	@AfterClass
+	@Description("Closing the the App after execution")
+	@Epic("TC001_TestCase")
+	@Feature("Closing the App")
+	@Story("Checking whether App is getting closed")
+	@Step("Close APP Demo app")
 	public void End() {
 		driver.quit();
 	}

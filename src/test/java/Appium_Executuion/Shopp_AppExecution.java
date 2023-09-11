@@ -21,6 +21,11 @@ import DemoApp.ViewPage;
 import ShoppApp.Login;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Step;
+import io.qameta.allure.Story;
 
 public class Shopp_AppExecution {
 	AndroidDriver driver = null;
@@ -31,6 +36,11 @@ public class Shopp_AppExecution {
 	}  */
 	
 	@Test(dataProvider = "provideLogInData") 
+	@Description("Launching the App and purchase the order for the customer")
+	@Epic("Shopp_APP_TestCase")
+	@Feature("Starting the App and Purchase the item from App")
+	@Story("Checking whether the customer is able to purchase his item")
+	@Step("Open APP Demo app and order the item")
 	public void Shop_Start(int value) throws Exception {
 		driver = new StartBase().ShoppAppStart();
 		new Login(driver).BasicLogin(value);
@@ -54,6 +64,11 @@ public class Shopp_AppExecution {
 	}
 		
 	@AfterClass
+	@Description("Closing the the App after execution")
+	@Epic("Shopp_APP_TestCase")
+	@Feature("Closing the App")
+	@Story("Checking whether App is getting closed")
+	@Step("Close APP Demo app")
 	public void End() {
 		driver.quit();
 	}
