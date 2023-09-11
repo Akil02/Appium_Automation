@@ -20,6 +20,8 @@ import io.appium.java_client.service.local.AppiumServiceBuilder;
 
 public class StartBase {
 
+	AndroidDriver driver;
+	public static ThreadLocal<AndroidDriver> tdriver = new ThreadLocal<AndroidDriver>();
 	
 	public AndroidDriver Start() throws MalformedURLException {
 		String n = "C:\\Users\\A AKIL GANESH\\AppData\\Roaming\\npm\\node_modules\\appium\\bin\\ios-webkit-debug-proxy-launcher.js";
@@ -33,9 +35,10 @@ public class StartBase {
 		cap.setCapability(MobileCapabilityType.DEVICE_NAME,"Akil3");
 		cap.setCapability(MobileCapabilityType.APP,name);
 		cap.setCapability("chromedriverExecutable", System.getProperty("user.dir")+"\\src\\main\\java\\resources\\chromedriver.exe");
-		AndroidDriver driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"),cap);
+		driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"),cap);
 	//	apserver.stop();
-		return driver;
+		tdriver.set(driver);
+		return getDriver();
 		
 	}
 	
@@ -46,8 +49,13 @@ public class StartBase {
 		cap.setCapability(MobileCapabilityType.DEVICE_NAME,"Akil3");
 		cap.setCapability(MobileCapabilityType.APP,name);
 		cap.setCapability("chromedriverExecutable", System.getProperty("user.dir")+"\\src\\main\\java\\resources\\chromedriver.exe");
-		AndroidDriver driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"),cap);
-		return driver;
+		driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"),cap);
+		tdriver.set(driver);
+		return getDriver();
+	}
+	
+	public static synchronized AndroidDriver getDriver() {
+		return tdriver.get();
 	}
 	
 	public void takeScreenshot(String screenShotName,AndroidDriver driver1) {
@@ -71,4 +79,5 @@ public class StartBase {
 		}
 		return workbook;
 }
+	
 }

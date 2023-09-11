@@ -2,16 +2,16 @@
 <testng-results ignored="0" total="1" passed="0" failed="1" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2023-09-11T08:13:14 IST" name="Suite" finished-at="2023-09-11T08:14:08 IST" duration-ms="53945">
+  <suite started-at="2023-09-11T22:55:18 IST" name="Suite" finished-at="2023-09-11T22:55:50 IST" duration-ms="31459">
     <groups>
     </groups>
-    <test started-at="2023-09-11T08:13:14 IST" name="Test" finished-at="2023-09-11T08:14:08 IST" duration-ms="53945">
+    <test started-at="2023-09-11T22:55:18 IST" name="Test" finished-at="2023-09-11T22:55:50 IST" duration-ms="31459">
       <class name="Appium_Executuion.TC001_Execution">
-        <test-method is-config="true" signature="Start1()[pri:0, instance:Appium_Executuion.TC001_Execution@1816e24a]" started-at="2023-09-11T08:13:14 IST" name="Start1" finished-at="2023-09-11T08:13:47 IST" duration-ms="33004" status="PASS">
+        <test-method is-config="true" signature="Start1()[pri:0, instance:Appium_Executuion.TC001_Execution@5e671e20]" started-at="2023-09-11T22:55:18 IST" name="Start1" finished-at="2023-09-11T22:55:29 IST" duration-ms="11254" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- Start1 -->
-        <test-method signature="Execution()[pri:0, instance:Appium_Executuion.TC001_Execution@1816e24a]" started-at="2023-09-11T08:13:47 IST" name="Execution" finished-at="2023-09-11T08:14:08 IST" duration-ms="20180" status="FAIL">
+        <test-method signature="Execution()[pri:0, instance:Appium_Executuion.TC001_Execution@5e671e20]" started-at="2023-09-11T22:55:29 IST" name="Execution" finished-at="2023-09-11T22:55:48 IST" duration-ms="18573" status="FAIL">
           <exception class="org.openqa.selenium.NoSuchElementException">
             <message>
               <![CDATA[An element could not be located on the page using the given search parameters.
@@ -19,9 +19,9 @@ For documentation on this error, please visit: https://www.selenium.dev/document
 Build info: version: '4.12.1', revision: '8e34639b11'
 System info: os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '19.0.1'
 Driver info: io.appium.java_client.android.AndroidDriver
-Command: [1a6a37bf-b0f7-40c1-98aa-7e428ab121f0, findElement {using=id, value=android:id/aerr_app_info}]
+Command: [aadf5089-93f4-4ab4-bcda-4aac2a3d4140, findElement {using=id, value=android:id/aerr_app_info}]
 Capabilities {appium:app: C:\Appium_Automation\src\ma..., appium:appPackage: io.appium.android.apis, appium:chromedriverExecutable: C:\Appium_Automation\src\ma..., appium:databaseEnabled: false, appium:desired: {app: C:\Appium_Automation\src\ma..., chromedriverExecutable: C:\Appium_Automation\src\ma..., deviceName: Akil3, platformName: ANDROID}, appium:deviceApiLevel: 34, appium:deviceManufacturer: Google, appium:deviceModel: sdk_gphone64_x86_64, appium:deviceName: emulator-5554, appium:deviceScreenDensity: 560, appium:deviceScreenSize: 1440x2960, appium:deviceUDID: emulator-5554, appium:javascriptEnabled: true, appium:locationContextEnabled: false, appium:networkConnectionEnabled: true, appium:pixelRatio: 3.5, appium:platformVersion: 14, appium:statBarHeight: 171, appium:takesScreenshot: true, appium:viewportRect: {height: 2534, left: 0, top: 171, width: 1440}, appium:warnings: {}, appium:webStorageEnabled: false, platformName: ANDROID}
-Session ID: 1a6a37bf-b0f7-40c1-98aa-7e428ab121f0]]>
+Session ID: aadf5089-93f4-4ab4-bcda-4aac2a3d4140]]>
             </message>
             <full-stacktrace>
               <![CDATA[org.openqa.selenium.NoSuchElementException: An element could not be located on the page using the given search parameters.
@@ -29,9 +29,9 @@ For documentation on this error, please visit: https://www.selenium.dev/document
 Build info: version: '4.12.1', revision: '8e34639b11'
 System info: os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '19.0.1'
 Driver info: io.appium.java_client.android.AndroidDriver
-Command: [1a6a37bf-b0f7-40c1-98aa-7e428ab121f0, findElement {using=id, value=android:id/aerr_app_info}]
+Command: [aadf5089-93f4-4ab4-bcda-4aac2a3d4140, findElement {using=id, value=android:id/aerr_app_info}]
 Capabilities {appium:app: C:\Appium_Automation\src\ma..., appium:appPackage: io.appium.android.apis, appium:chromedriverExecutable: C:\Appium_Automation\src\ma..., appium:databaseEnabled: false, appium:desired: {app: C:\Appium_Automation\src\ma..., chromedriverExecutable: C:\Appium_Automation\src\ma..., deviceName: Akil3, platformName: ANDROID}, appium:deviceApiLevel: 34, appium:deviceManufacturer: Google, appium:deviceModel: sdk_gphone64_x86_64, appium:deviceName: emulator-5554, appium:deviceScreenDensity: 560, appium:deviceScreenSize: 1440x2960, appium:deviceUDID: emulator-5554, appium:javascriptEnabled: true, appium:locationContextEnabled: false, appium:networkConnectionEnabled: true, appium:pixelRatio: 3.5, appium:platformVersion: 14, appium:statBarHeight: 171, appium:takesScreenshot: true, appium:viewportRect: {height: 2534, left: 0, top: 171, width: 1440}, appium:warnings: {}, appium:webStorageEnabled: false, platformName: ANDROID}
-Session ID: 1a6a37bf-b0f7-40c1-98aa-7e428ab121f0
+Session ID: aadf5089-93f4-4ab4-bcda-4aac2a3d4140
 at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:67)
 at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:500)
 at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:484)
@@ -78,7 +78,7 @@ at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:77)
           <reporter-output>
           </reporter-output>
         </test-method> <!-- Execution -->
-        <test-method is-config="true" signature="End()[pri:0, instance:Appium_Executuion.TC001_Execution@1816e24a]" started-at="2023-09-11T08:14:08 IST" name="End" finished-at="2023-09-11T08:14:08 IST" duration-ms="561" status="PASS">
+        <test-method is-config="true" signature="End()[pri:0, instance:Appium_Executuion.TC001_Execution@5e671e20]" started-at="2023-09-11T22:55:49 IST" name="End" finished-at="2023-09-11T22:55:50 IST" duration-ms="560" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- End -->
