@@ -6,13 +6,13 @@
   </listeners>
   <test thread-count="5" name="Test(failed)">
     <classes>
-      <class name="Appium_Executuion.TC001_Execution">
+      <class name="Appium_Executuion.TC006_Execution">
         <methods>
+          <include name="Start1"/>
           <include name="End"/>
           <include name="Execution"/>
-          <include name="Start1"/>
         </methods>
-      </class> <!-- Appium_Executuion.TC001_Execution -->
+      </class> <!-- Appium_Executuion.TC006_Execution -->
     </classes>
   </test> <!-- Test(failed) -->
 </suite> <!-- Failed suite [Suite] -->

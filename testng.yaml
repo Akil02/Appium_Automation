@@ -1,0 +1,9 @@
+name: Suite
+configFailurePolicy: skip
+listeners:
+  - Base.Listener
+tests:
+  - name: Test
+  classes:
+    - Appium_Executuion.TC006_Execution
+

@@ -9,7 +9,7 @@
 <!--	  <class name="Appium_Executuion.Shopp_AppExecution"/>
      <class name="Appium_Executuion.TC002_Execution"/>
       <class name="Appium_Executuion.TC003_Execution"/>  -->
-      <class name="Appium_Executuion.TC001_Execution"/>    
+      <class name="Appium_Executuion.TC006_Execution"/>    
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->
