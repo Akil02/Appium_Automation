@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -54,6 +55,21 @@ public class StartBase {
 		return getDriver();
 	}
 	
+	public AndroidDriver setup() throws MalformedURLException {
+		System.out.println("Before");
+		String appLoc = System.getProperty("user.dir")+"\\src\\main\\java\\resources\\Android-MyDemoAppRN.1.3.0.build-244.apk";
+		DesiredCapabilities cap1 = new DesiredCapabilities();
+		cap1.setCapability(MobileCapabilityType.DEVICE_NAME,"Akil3");
+		cap1.setCapability(MobileCapabilityType.APP,appLoc);
+		driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"),cap1);
+		new StartBase().tdriver.set(driver);
+		return new StartBase().getDriver();
+	}
+	
+	public void teardown() {
+		System.out.println("After");
+		driver.quit();
+	}
 	public static synchronized AndroidDriver getDriver() {
 		return tdriver.get();
 	}
@@ -79,5 +95,12 @@ public class StartBase {
 		}
 		return workbook;
 }
+	
+	public Properties Prop() throws IOException {
+		Properties obj = new Properties();					
+	    FileInputStream objfile = new FileInputStream(System.getProperty("user.dir")+"\\src\\main\\java\\resources\\config.properties");									
+	    obj.load(objfile);
+	    return obj;
+	}
 	
 }
