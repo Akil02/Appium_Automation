@@ -27,8 +27,9 @@ public class AppHomePage {
                 + "new UiSelector().textContains(\"Log Out\").instance(0))")).click();
 	}
 	
-	public void Logout_But() {
+	public void Logout_But() throws Exception {
 		driver.findElement(log_but).click();
+		Thread.sleep(2000);
 		if(driver.findElement(Suc_logout) != null) {
 			driver.findElement(Suc_logout).click();
 		}

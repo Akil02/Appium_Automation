@@ -14,6 +14,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.annotations.Test;
 
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
@@ -101,6 +102,20 @@ public class StartBase {
 	    FileInputStream objfile = new FileInputStream(System.getProperty("user.dir")+"\\src\\main\\java\\resources\\config.properties");									
 	    obj.load(objfile);
 	    return obj;
+	}
+	
+	public void ScrollText(String name, AndroidDriver driver1) {
+		driver1.findElement(MobileBy.AndroidUIAutomator(
+                "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView("
+                + "new UiSelector().textContains(\""+name+"\").instance(0))")).click();
+	}
+	
+	public void ScreenShot(AndroidDriver driver1,String name) throws IOException {
+		TakesScreenshot scrShot =((TakesScreenshot)driver1);
+		File SrcFile=scrShot.getScreenshotAs(OutputType.FILE);
+		String loc = System.getProperty("user.dir")+"//"+name+".png";
+		File desfile = new File(loc);
+		FileUtils.copyFile(SrcFile, desfile);
 	}
 	
 }

@@ -8,7 +8,8 @@ import io.cucumber.junit.CucumberOptions;
 @RunWith(Cucumber.class)
 @CucumberOptions(
 		features = "C:\\Appium_Automation\\src\\main\\resource\\ShopDemoFeatures",
-		glue = {"stepDefinition"}
+		glue = {"stepDefinition"},
+		tags = "@Purcahse_Required_item"
 		)  
 public class TestRunner {
 

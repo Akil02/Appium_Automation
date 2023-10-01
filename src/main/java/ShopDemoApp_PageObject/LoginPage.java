@@ -21,8 +21,8 @@ public class LoginPage {
 	}
 	
 	public void Password() {
-		String pass1 = driver.findElement(AppiumBy.xpath("//android.view.ViewGroup[@content-desc=\"Login button\"]//following-sibling::android.widget.TextView[1]")).getText();
-	    driver.findElement(pass).sendKeys(pass1);
+		String pass1 = driver.findElement(AppiumBy.xpath("//android.view.ViewGroup[@content-desc=\"Login button\"]//following-sibling::android.widget.TextView[3]")).getText();
+		driver.findElement(pass).sendKeys(pass1);
 	}
 	
 	public void Login() {

@@ -34,7 +34,7 @@ public class Sample {
 	    }  */
 	    System.out.println("This is to check the "+rest.contentType());
 	    
-	    System.out.println(p.getList("data.first_name"));
+	//    System.out.println(p.getList("data.first_name"));
 	    System.out.println(p.getString("total"));
 	    System.out.println("Third name : "+p.getString("data[3].first_name"));
 	    List<String> s = p.getList("data.first_name");

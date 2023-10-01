@@ -14,7 +14,7 @@ import io.cucumber.java.Before;
 public class ShopDemo_Hooks {
 
 	AndroidDriver driver;
-	@Before
+/*	@Before
 	public AndroidDriver setup() throws MalformedURLException {
 		System.out.println("Before");
 		String appLoc = System.getProperty("user.dir")+"src\\main\\java\\resources\\Android-MyDemoAppRN.1.3.0.build-244.apk";
@@ -30,5 +30,5 @@ public class ShopDemo_Hooks {
 	public void teardown() {
 		System.out.println("After");
 		driver.quit();
-	}    
+	}     */
 }
