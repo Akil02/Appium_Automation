@@ -3,12 +3,13 @@
 <suite name="Failed suite [Suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Test(failed)">
     <classes>
-      <class name="Appium_Executuion.Shopp_AppExecution">
+      <class name="Appium_Executuion.TC002_Execution">
         <methods>
-          <include name="Shop_Start" invocation-numbers="1"/>
+          <include name="Execution"/>
+          <include name="Start1"/>
           <include name="End"/>
         </methods>
-      </class> <!-- Appium_Executuion.Shopp_AppExecution -->
+      </class> <!-- Appium_Executuion.TC002_Execution -->
     </classes>
   </test> <!-- Test(failed) -->
 </suite> <!-- Failed suite [Suite] -->

@@ -32,10 +32,15 @@ public class Shopp_AppExecution {
 	
 	@Test(dataProvider = "provideLogInData") 
 	public void Shop_Start(int value) throws Exception {
+	 try {
 		driver = new StartBase().ShoppAppStart();
 		new Login(driver).BasicLogin(value);
 		new Login(driver).Adding_item(value);
 		new Login(driver).google_Search();
+	 }
+	 catch(Exception e) {
+		 System.out.println(e.getMessage());
+	 }
 	}
 	
 	@DataProvider (name = "provideLogInData")

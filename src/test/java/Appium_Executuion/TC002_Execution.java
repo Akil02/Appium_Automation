@@ -32,8 +32,10 @@ AndroidDriver driver = null;
 	@Test
 	public void Execution() throws Exception {
 		new Learning1(driver).FirstStart();
+		System.out.println("Started after that");
 		KeyEvent overviewKey = new KeyEvent();
         overviewKey.withKey(AndroidKey.BACK); 
+        System.out.println("Success till now");
         driver.pressKey(overviewKey);
         driver.pressKey(overviewKey);
         new Learning1(driver).LongPress();

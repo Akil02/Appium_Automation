@@ -10,9 +10,14 @@
   <name>Learning</name>
   <url>http://maven.apache.org</url>
 
-  <properties>
+<!--  <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <aspectj.version>1.8.10</aspectj.version>
+  </properties>  -->
+  <properties>
+	<aspectj.version>1.8.10</aspectj.version>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
   </properties>
    
    <build>
@@ -65,7 +70,7 @@
 <dependency>
     <groupId>io.appium</groupId>
     <artifactId>java-client</artifactId>
-    <version>8.4.0</version>
+    <version>8.6.0</version>  <!-- Updated -->
 </dependency>
 <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
 <dependency>

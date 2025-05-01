@@ -32,6 +32,7 @@ public class Learning1 {
 		driver.findElement(AppiumBy.xpath("//android.widget.TextView[@text = 'WiFi settings']")).click();
 		driver.findElement(AppiumBy.id("android:id/edit")).sendKeys("Akil Ganesh");
 		driver.findElement(AppiumBy.xpath("(//android.widget.Button)[2]")).click();
+		System.out.println("First Start ended");
 	}
 	
 	

@@ -3,6 +3,7 @@ package Base;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -17,6 +18,7 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
+import io.appium.java_client.android.options.UiAutomator2Options;
 
 public class StartBase {
 
@@ -24,30 +26,58 @@ public class StartBase {
 	public AndroidDriver Start() throws MalformedURLException {
 		String n = "C:\\Users\\A AKIL GANESH\\AppData\\Roaming\\npm\\node_modules\\appium\\bin\\ios-webkit-debug-proxy-launcher.js";
 		String name = System.getProperty("user.dir")+"\\src\\main\\java\\resources\\ApiDemos-debug.apk";
-		System.out.println(name);
-	/*	AppiumDriverLocalService apserver = new AppiumServiceBuilder().withAppiumJS(new File(n))
-		.withIPAddress("127.0.0.1").usingPort(4723).build();
-		apserver.start();  */
-		DesiredCapabilities cap = new DesiredCapabilities();
-	//	cap.setCapability("orientation", "LANDSCAPE");
-		cap.setCapability(MobileCapabilityType.DEVICE_NAME,"Akil3");
-		cap.setCapability(MobileCapabilityType.APP,name);
-		cap.setCapability("chromedriverExecutable", System.getProperty("user.dir")+"\\src\\main\\java\\resources\\chromedriver.exe");
-		AndroidDriver driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"),cap);
-	//	apserver.stop();
-		return driver;
+		AndroidDriver driver = null;
+		try {
+            UiAutomator2Options options = new UiAutomator2Options();
+            // Set your desired capabilities here, example:
+            options.setDeviceName("Akil3");
+            options.setApp(name);
+            options.setCapability("chromedriverExecutable", System.getProperty("user.dir") + "\\src\\main\\java\\resources\\chromedriver-win64\\chromedriver.exe");
+            driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), options);
+            System.out.println("Driver initialized successfully!");
+
+        } catch (Exception e) {
+            System.out.println("Error while initializing driver: " + e.getMessage());
+
+            if (e.getCause() != null) {
+                System.out.println("Root Cause: " + e.getCause().getMessage());
+                e.getCause().printStackTrace();
+            } else {
+                e.printStackTrace();
+            }
+
+            throw new RuntimeException("Failed to initialize AndroidDriver", e);
+        }
+	    return driver;
 		
 	}
 	
 	public AndroidDriver ShoppAppStart() throws MalformedURLException {
 		String name = System.getProperty("user.dir")+"\\src\\main\\java\\resources\\General-Store.apk";
-		DesiredCapabilities cap = new DesiredCapabilities();
-	//	cap.setCapability("orientation", "LANDSCAPE");
-		cap.setCapability(MobileCapabilityType.DEVICE_NAME,"Akil3");
-		cap.setCapability(MobileCapabilityType.APP,name);
-		cap.setCapability("chromedriverExecutable", System.getProperty("user.dir")+"\\src\\main\\java\\resources\\chromedriver.exe");
-		AndroidDriver driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"),cap);
-		return driver;
+		
+		AndroidDriver driver = null;
+		try {
+            UiAutomator2Options options = new UiAutomator2Options();
+            // Set your desired capabilities here, example:
+            options.setDeviceName("Akil3");
+            options.setApp(name);
+            options.setCapability("chromedriverExecutable", System.getProperty("user.dir") + "\\src\\main\\java\\resources\\chromedriver-win64\\chromedriver.exe");
+            driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), options);
+            System.out.println("Driver initialized successfully!");
+
+        } catch (Exception e) {
+            System.out.println("Error while initializing driver: " + e.getMessage());
+
+            if (e.getCause() != null) {
+                System.out.println("Root Cause: " + e.getCause().getMessage());
+                e.getCause().printStackTrace();
+            } else {
+                e.printStackTrace();
+            }
+
+            throw new RuntimeException("Failed to initialize AndroidDriver", e);
+        }
+	    return driver;
 	}
 	
 	public void takeScreenshot(String screenShotName,AndroidDriver driver1) {
