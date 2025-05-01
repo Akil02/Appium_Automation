@@ -30,11 +30,18 @@ jobs:
     - name: Set up Android SDK
       uses: android-actions/setup-android@v2
 
-    - name: Create and start emulator
-      run: |
-        echo "y" | sdkmanager "system-images;android-30;google_apis;x86"
-        echo "no" | avdmanager create avd -n Akil3 -k "system-images;android-30;google_apis;x86" --device "pixel"
-        $ANDROID_HOME/emulator/emulator -avd Akil3 -no-audio -no-window -gpu swiftshader_indirect &
+    - name: Start Android Emulator
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 30
+        target: google_apis
+        arch: x86
+        profile: pixel
+        emulator-options: -no-window -no-audio
+        script: |
+           adb devices
+           adb shell input keyevent 82
+           mvn test
 
     - name: Wait for emulator to boot
       run: |
