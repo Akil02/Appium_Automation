@@ -41,13 +41,16 @@ jobs:
 
       - name: Start Emulator Akil3
         run: |
-          emulator -avd Akil3 -no-window -no-audio -no-snapshot &
+          export ANDROID_SDK_ROOT=$ANDROID_HOME
+          export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
+          nohup emulator -avd Akil3 -no-audio -no-snapshot &
           echo "Waiting for emulator to boot..."
           adb wait-for-device
           boot_completed=""
           until [[ "$boot_completed" == "1" ]]; do
             sleep 5
             boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
+            echo "boot_completed=$boot_completed"
           done
           echo "Emulator booted!"
           adb shell input keyevent 82
@@ -59,3 +62,7 @@ jobs:
 
       - name: Run Appium Tests
         run: mvn test
+
+      - name: Show Appium Logs if Failed
+        if: failure()
+        run: tail -n 100 appium.log
