@@ -1,11 +1,11 @@
-name: Android Appium Test
+name: Android Appium Test with Custom AVD
 
 on:
   workflow_dispatch:
 
 jobs:
-  appium-tests:
-    runs-on: macos-latest  # Use macOS runner to avoid emulator boot issues
+  run-tests:
+    runs-on: macos-latest  # macOS required for emulator boot with GUI
 
     steps:
       - name: Checkout code
@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install Appium and dependencies
+      - name: Install Appium
         run: |
           npm install -g appium
           appium -v
@@ -30,18 +30,28 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v2
 
-      - name: Run Appium Tests on Android Emulator
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 30
-          target: google_apis
-          arch: x86
-          profile: pixel
-          emulator-options: -no-window -no-audio -no-snapshot
-          emulator-boot-timeout: 600  # wait up to 10 minutes
-          script: |
-            echo "Starting Appium..."
-            nohup appium --base-path /wd/hub > appium.log 2>&1 &
-            sleep 20  # Give Appium time to start
-            adb shell input keyevent 82  # Unlock emulator
-            mvn test
+      - name: Create AVD (Akil3)
+        run: |
+          echo "no" | avdmanager create avd -n Akil3 -k "system-images;android-30;google_apis;x86" --force
+          sdkmanager "platform-tools" "emulator" "system-images;android-30;google_apis;x86"
+
+      - name: Start Emulator Akil3
+        run: |
+          nohup emulator -avd Akil3 -no-window -no-audio -no-snapshot > /dev/null 2>&1 &
+          echo "Waiting for emulator to boot..."
+          adb wait-for-device
+          boot_completed=""
+          until [[ "$boot_completed" == "1" ]]; do
+            sleep 5
+            boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
+          done
+          echo "Emulator booted!"
+          adb shell input keyevent 82  # Unlock screen
+
+      - name: Start Appium Server
+        run: |
+          nohup appium --base-path /wd/hub > appium.log 2>&1 &
+          sleep 20  # Allow Appium to start
+
+      - name: Run Appium Tests with Maven
+        run: mvn test
