@@ -1,7 +1,7 @@
 name: Appium Android Test
 
 on:
-  workflow_dispatch:  # You can manually trigger this from GitHub Actions UI
+  workflow_dispatch:  # Manually trigger from GitHub Actions UI
   # push:
   #   branches:
   #     - main
@@ -30,8 +30,29 @@ jobs:
         mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
 
         echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
-        echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
-        echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
+        export PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$PATH
 
-        yes | sdkmanager --sdk_root=$HOME/android-sdk --licenses
-        sdkmanager "platform
+        yes | sdkmanager --licenses
+        sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "emulator" "system-images;android-30;google_apis;x86_64"
+
+    - name: Install Appium and dependencies
+      run: |
+        npm install -g appium
+        npm install -g appium-doctor
+        appium-doctor --android
+
+    - name: Create and Start Android Emulator (Akil3)
+      run: |
+        echo "no" | avdmanager create avd -n Akil3 -k "system-images;android-30;google_apis;x86_64" --force
+        emulator -avd Akil3 -no-window -gpu off &
+        adb wait-for-device
+        adb shell input keyevent 82 &
+
+    - name: Start Appium Server
+      run: |
+        appium --base-path /wd/hub --log-level info &
+        sleep 10
+
+    - name: Run Appium Tests using Maven
+      run: |
+        mvn test
