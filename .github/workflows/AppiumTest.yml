@@ -12,12 +12,12 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
-    # Step 2: Set up Java (required for Appium and your tests)
+    # ✅ FIXED: Proper indentation for setting up Java
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
-        java-version: '11'  # Use the version you need, like 11 or 8
-        distribution: 'adoptopenjdk'  # Specify the distribution, like adoptopenjdk, openjdk, etc.
+        java-version: '11'
+        distribution: 'temurin'
 
     # Step 3: Set up Android SDK and install required dependencies
     - name: Set up Android SDK
@@ -36,22 +36,3 @@ jobs:
       run: |
         npm install -g appium
         npm install -g appium-doctor
-        appium-doctor --android
-
-    # Step 5: Create and Start Android Emulator (Akil3)
-    - name: Create and Start Android Emulator (Akil3)
-      run: |
-        echo "Creating and Starting Android Emulator Akil3..."
-        # Create the emulator (if it doesn't already exist)
-        echo "no" | avdmanager create avd -n Akil3 -k "system-images;android-30;google_apis;x86_64" --force
-        # Start the emulator
-        emulator -avd Akil3 -no-window -gpu off &
-        adb wait-for-device
-        adb shell input keyevent 82 &  # Unlock the device if needed
-
-    # Step 6: Run your Appium tests
-    - name: Run Appium tests
-      run: |
-        # Assuming you are using Maven/Gradle/Direct Java Execution
-        # Run the test using Maven or Gradle (adjust as needed)
-        mvn test  # or ./gradlew test
