@@ -1,7 +1,12 @@
 name: Appium Android Test
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   test:
@@ -17,6 +22,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '11'  # Use the version you need, like 11 or 8
+        distribution: 'adoptopenjdk'  # Specify the distribution, like adoptopenjdk, openjdk, etc.
 
     # Step 3: Set up Android SDK and install required dependencies
     - name: Set up Android SDK
