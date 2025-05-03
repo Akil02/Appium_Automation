@@ -1,14 +1,15 @@
 name: Appium Android Test
 
 on:
-  workflow_dispatch:  # Manually trigger from GitHub Actions UI
-  # push:
-  #   branches:
-  #     - main
+  workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    env:
+      ANDROID_SDK_ROOT: $HOME/android-sdk
+      AVD_NAME: Akil3
 
     steps:
     - name: Check out code
@@ -24,27 +25,32 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y wget unzip lib32stdc++6 lib32z1 libpulse0
-        mkdir -p $HOME/android-sdk/cmdline-tools
-        wget https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip -O cmdline-tools.zip
-        unzip cmdline-tools.zip -d $HOME/android-sdk/cmdline-tools
-        mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+        mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
+        wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
+        unzip cmdline-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools
+        mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest
 
-        echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
-        export PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$PATH
+        echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
+        echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
+        echo "$ANDROID_SDK_ROOT/emulator" >> $GITHUB_PATH
 
+    - name: Install Android SDK packages
+      run: |
+        export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
         yes | sdkmanager --licenses
         sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "emulator" "system-images;android-30;google_apis;x86_64"
 
-    - name: Install Appium and dependencies
+    - name: Install Appium
       run: |
         npm install -g appium
         npm install -g appium-doctor
         appium-doctor --android
 
-    - name: Create and Start Android Emulator (Akil3)
+    - name: Create and Start Emulator
       run: |
-        echo "no" | avdmanager create avd -n Akil3 -k "system-images;android-30;google_apis;x86_64" --force
-        emulator -avd Akil3 -no-window -gpu off &
+        export PATH=$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
+        echo "no" | avdmanager create avd -n $AVD_NAME -k "system-images;android-30;google_apis;x86_64" --force
+        emulator -avd $AVD_NAME -no-window -gpu off -noaudio &
         adb wait-for-device
         adb shell input keyevent 82 &
 
@@ -53,6 +59,5 @@ jobs:
         appium --base-path /wd/hub --log-level info &
         sleep 10
 
-    - name: Run Appium Tests using Maven
-      run: |
-        mvn test
+    - name: Run Appium Tests
+      run: mvn test
