@@ -30,10 +30,14 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v2
 
+      - name: Install Android Emulator System Image
+        run: |
+          sdkmanager "system-images;android-30;google_apis;x86"
+          yes | sdkmanager --licenses
+
       - name: Create AVD (Akil3)
         run: |
           echo "no" | avdmanager create avd -n Akil3 -k "system-images;android-30;google_apis;x86" --force
-          sdkmanager "platform-tools" "emulator" "system-images;android-30;google_apis;x86"
 
       - name: Start Emulator Akil3
         run: |
@@ -46,7 +50,7 @@ jobs:
             boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
           done
           echo "Emulator booted!"
-          adb shell input keyevent 82  # Unlock screen
+          adb shell input keyevent 82
 
       - name: Start Appium Server
         run: |
