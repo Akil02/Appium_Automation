@@ -1,70 +1,20 @@
-name: Manual Run - Appium Tests
+name: Emulator Test
 
 on:
   workflow_dispatch:
 
 jobs:
-  run-appium-tests:
+  emulator:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Java 11
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '11'
-
-    - name: Install Node.js (for Appium)
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-
-    - name: Install Appium
-      run: |
-        npm install -g appium
-        appium -v
-
-    - name: Start Emulator and Run Tests
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: 29               # Changed from 30 → 29 for stability
-        target: google_apis
-        arch: x86_64
-        profile: pixel
-        emulator-options: "-no-window -no-audio"
-        disable-animations: true
-        script: |
-          set -ex   # Print commands and exit on error
-
-          echo "✅ ADB Devices:"
-          adb devices
-
-          echo "✅ Installing APKs"
-          adb install src/main/java/resources/General-Store.apk || true
-          adb install src/main/java/resources/ApiDemos-debug.apk || true
-
-          echo "✅ Starting Appium server..."
-          nohup appium --log-level info > appium.log 2>&1 &
-
-          echo "⏳ Waiting for Appium to be ready..."
-          sleep 20
-
-          echo "✅ Running Maven Tests"
-          mvn test
-
-    - name: Upload Appium Logs
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: appium-log
-        path: appium.log
-
-    - name: Upload Test Report
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: testng-report
-        path: test-output
+      - name: Start Emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: google_apis
+          arch: x86_64
+          profile: pixel
+          emulator-options: "-no-window -no-audio"
+          disable-animations: true
