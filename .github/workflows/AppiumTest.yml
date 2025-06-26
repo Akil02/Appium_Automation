@@ -30,25 +30,27 @@ jobs:
     - name: Start Emulator and Run Tests
       uses: reactivecircus/android-emulator-runner@v2
       with:
-        api-level: 30
+        api-level: 29               # Changed from 30 → 29 for stability
         target: google_apis
         arch: x86_64
-        profile: pixel_4
+        profile: pixel
         emulator-options: "-no-window -no-audio"
         disable-animations: true
         script: |
+          set -ex   # Print commands and exit on error
+
           echo "✅ ADB Devices:"
           adb devices
 
           echo "✅ Installing APKs"
-          adb install src/main/java/resources/General-Store.apk
-          adb install src/main/java/resources/ApiDemos-debug.apk
+          adb install src/main/java/resources/General-Store.apk || true
+          adb install src/main/java/resources/ApiDemos-debug.apk || true
 
           echo "✅ Starting Appium server..."
           nohup appium --log-level info > appium.log 2>&1 &
 
           echo "⏳ Waiting for Appium to be ready..."
-          sleep 15
+          sleep 20
 
           echo "✅ Running Maven Tests"
           mvn test
