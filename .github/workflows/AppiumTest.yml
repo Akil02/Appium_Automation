@@ -6,8 +6,10 @@ on:
 jobs:
   emulator:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Start Emulator
         uses: reactivecircus/android-emulator-runner@v2
@@ -18,3 +20,6 @@ jobs:
           profile: pixel
           emulator-options: "-no-window -no-audio"
           disable-animations: true
+          script: |
+            echo "✅ Emulator booted!"
+            adb devices
