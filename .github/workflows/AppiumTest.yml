@@ -1,15 +1,14 @@
-name: Manual Run - Appium Android Tests
+name: Manual Run - Appium Tests
 
 on:
-  workflow_dispatch:  # This allows manual run from GitHub UI
+  workflow_dispatch:
 
 jobs:
-  run-tests:
-    name: Run Appium Tests on Emulator
+  run-appium-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout Code
       uses: actions/checkout@v4
 
     - name: Set up Java 11
@@ -18,7 +17,17 @@ jobs:
         distribution: 'temurin'
         java-version: '11'
 
-    - name: Set up Android Emulator and Run Tests
+    - name: Install Node.js (for Appium)
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install Appium
+      run: |
+        npm install -g appium
+        appium -v
+
+    - name: Start Emulator and Run Tests
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: 30
@@ -28,15 +37,29 @@ jobs:
         emulator-options: "-no-window -no-audio"
         disable-animations: true
         script: |
-          echo "Installing Appium..."
-          npm install -g appium
-          appium --log-level info &
-          echo "Waiting for Appium to start..."
+          echo "✅ ADB Devices:"
+          adb devices
+
+          echo "✅ Installing your APK (skip if not needed)"
+          # adb install path/to/your.apk
+
+          echo "✅ Starting Appium server..."
+          nohup appium --log-level info > appium.log 2>&1 &
+
+          echo "⏳ Waiting for Appium to be ready..."
           sleep 15
-          echo "Running TestNG tests using Maven..."
+
+          echo "✅ Running Maven Tests"
           mvn test
 
-    - name: Upload TestNG Report
+    - name: Upload Appium Logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: appium-log
+        path: appium.log
+
+    - name: Upload Test Report
       if: always()
       uses: actions/upload-artifact@v4
       with:
