@@ -40,8 +40,9 @@ jobs:
           echo "✅ ADB Devices:"
           adb devices
 
-          echo "✅ Installing your APK (skip if not needed)"
-          # adb install path/to/your.apk
+          echo "✅ Installing APKs"
+          adb install src/main/java/resources/General-Store.apk
+          adb install src/main/java/resources/ApiDemos-debug.apk
 
           echo "✅ Starting Appium server..."
           nohup appium --log-level info > appium.log 2>&1 &
