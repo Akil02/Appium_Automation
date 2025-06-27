@@ -1,4 +1,4 @@
-name: Run Appium Tests on Emulator
+name: Appium Test on Emulator
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 11
+      - name: Set up Java 11
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -23,12 +23,12 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Appium and Drivers
+      - name: Install Appium
         run: |
           npm install -g appium
           appium driver install uiautomator2
 
-      - name: Start Android Emulator
+      - name: Start Emulator and Run Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
@@ -38,15 +38,14 @@ jobs:
           emulator-options: "-no-window -no-audio"
           disable-animations: true
           script: |
+            echo "📱 Starting emulator..."
             adb wait-for-device
             adb shell input keyevent 82
-            echo "✅ Emulator is ready"
+            echo "✅ Emulator ready"
 
-      - name: Start Appium Server
-        run: |
-          nohup appium --base-path /wd/hub > appium.log 2>&1 &
-          sleep 10
-          echo "✅ Appium server is running"
+            echo "🚀 Starting Appium server"
+            nohup appium --base-path /wd/hub > appium.log 2>&1 &
+            sleep 10
 
-      - name: Run Appium Tests
-        run: mvn test
+            echo "🧪 Running tests"
+            mvn test
