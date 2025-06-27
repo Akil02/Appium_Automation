@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Appium and drivers
+      - name: Install Appium and Drivers
         run: |
           npm install -g appium
           appium driver install uiautomator2
@@ -38,14 +38,15 @@ jobs:
           emulator-options: "-no-window -no-audio"
           disable-animations: true
           script: |
-            echo "✅ Emulator started"
-            adb devices
+            adb wait-for-device
+            adb shell input keyevent 82
+            echo "✅ Emulator is ready"
 
-      - name: Start Appium Server in Background
+      - name: Start Appium Server
         run: |
           nohup appium --base-path /wd/hub > appium.log 2>&1 &
           sleep 10
-          echo "Appium server started"
+          echo "✅ Appium server is running"
 
-      - name: Run Appium Tests using Maven
+      - name: Run Appium Tests
         run: mvn test
