@@ -1,31 +1,56 @@
-name: Emulator-Only Working Test
+name: Run Appium Tests on Android Emulator
 
 on:
   workflow_dispatch:
 
 jobs:
-  emulator-test:
+  android-emulator:
     runs-on: ubuntu-latest
+
+    env:
+      ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+      PATH: ${{ github.workspace }}/android-sdk/cmdline-tools/latest/bin:${{ github.workspace }}/android-sdk/platform-tools:${{ github.workspace }}/android-sdk/emulator:$PATH
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Clean Broken Android SDK (workaround)
-        run: rm -rf $ANDROID_HOME
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip lib32stdc++6 lib32z1 qemu-kvm
 
-      - name: Start Emulator Only
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          target: google_apis
-          arch: x86_64
-          profile: pixel
-          emulator-options: "-no-audio -no-window"
-          disable-animations: true
-          script: |
-            echo "✅ Booting emulator..."
-            adb wait-for-device
-            adb shell input keyevent 82
-            adb devices
-            echo "✅ Emulator is alive"
+      - name: Download Android command line tools
+        run: |
+          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
+          curl -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip cmdline-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools
+          mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest
+          rm cmdline-tools.zip
+
+      - name: Accept licenses
+        run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+
+      - name: Install SDK packages
+        run: |
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "system-images;android-33;google_apis;x86_64" "emulator"
+
+      - name: Create emulator
+        run: |
+          echo "no" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager create avd -n test -k "system-images;android-33;google_apis;x86_64" --force
+
+      - name: Start emulator
+        run: |
+          $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-window -no-audio -no-boot-anim &
+          adb wait-for-device
+          adb shell input keyevent 82
+
+      - name: Run your Appium tests
+        run: |
+          # Your command to run Appium tests here, e.g.:
+          mvn test
+
+      - name: Stop emulator
+        if: always()
+        run: |
+          adb -s emulator-5554 emu kill
