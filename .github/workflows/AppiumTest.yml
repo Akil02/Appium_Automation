@@ -9,7 +9,7 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      - name: Checkout source
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Java 11
@@ -23,12 +23,12 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install Appium and UIAutomator2 driver
+      - name: Install Appium and driver
         run: |
           npm install -g appium
           appium driver install uiautomator2
 
-      - name: Start Android Emulator and run tests
+      - name: Start emulator and run Appium tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 33
@@ -38,10 +38,25 @@ jobs:
           emulator-options: "-no-window -no-audio -no-boot-anim -accel off"
           disable-animations: true
           script: |
-            echo "Starting Appium server"
+            echo "Starting Appium server..."
             nohup appium --log appium.log > /dev/null 2>&1 &
-            sleep 15
-            echo "Checking Appium is up..."
-            curl http://localhost:4723/wd/hub/status || exit 1
-            echo "Running Maven tests..."
-            mvn test
+
+            echo "Waiting for Appium to be ready..."
+            for i in {1..15}; do
+              if curl -s http://localhost:4723/wd/hub/status | grep -q "Appium"; then
+                echo "Appium is ready!"
+                break
+              fi
+              echo "Waiting... ($i)"
+              sleep 2
+            done
+
+            echo "Running Appium tests via Maven..."
+            mvn test || (echo "Tests failed! Dumping logs:" && cat appium.log && exit 1)
+
+      - name: Upload Appium log (if any)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: appium-log
+          path: appium.log
