@@ -51,12 +51,33 @@ jobs:
           echo "Available AVDs:"
           $ANDROID_SDK_ROOT/emulator/emulator -list-avds
 
-          echo "Starting emulator..."
-          nohup $ANDROID_SDK_ROOT/emulator/emulator -avd Akil3 -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect > emulator.log 2>&1 &
-          
-          echo "Waiting for device..."
-          adb wait-for-device
-          adb shell input keyevent 82
+          - name: Start emulator
+  run: |
+    export ANDROID_SDK_ROOT=$HOME/android-sdk
+    export PATH=$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools:$PATH
+
+    echo "Available AVDs:"
+    $ANDROID_SDK_ROOT/emulator/emulator -list-avds
+
+    echo "Starting emulator..."
+    nohup $ANDROID_SDK_ROOT/emulator/emulator -avd Akil3 \
+      -no-snapshot \
+      -no-audio \
+      -no-boot-anim \
+      -gpu swiftshader_indirect \
+      -no-window \
+      -accel off \
+      > emulator.log 2>&1 &
+
+    # Wait for emulator to finish booting
+    bootanim=""
+    until [[ "$bootanim" == "stopped" ]]; do
+      bootanim=$(adb -e shell getprop init.svc.bootanim 2>/dev/null | tr -d '\r')
+      echo "Waiting for emulator to finish booting... ($bootanim)"
+      sleep 5
+    done
+
+    adb shell input keyevent 82
 
       - name: Run Appium tests
         run: |
