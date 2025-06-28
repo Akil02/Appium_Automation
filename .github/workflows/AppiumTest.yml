@@ -7,10 +7,6 @@ jobs:
   android-emulator:
     runs-on: ubuntu-latest
 
-    env:
-      ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
-      PATH: ${{ github.workspace }}/android-sdk/cmdline-tools/latest/bin:${{ github.workspace }}/android-sdk/platform-tools:${{ github.workspace }}/android-sdk/emulator:$PATH
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -20,34 +16,39 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y unzip lib32stdc++6 lib32z1 qemu-kvm
 
-      - name: Download Android command line tools
+      - name: Set environment variables
         run: |
-          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
+          echo "ANDROID_SDK_ROOT=${HOME}/android-sdk" >> $GITHUB_ENV
+          echo "${HOME}/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "${HOME}/android-sdk/platform-tools" >> $GITHUB_PATH
+          echo "${HOME}/android-sdk/emulator" >> $GITHUB_PATH
+
+      - name: Download Android Command Line Tools
+        run: |
+          mkdir -p $HOME/android-sdk/cmdline-tools
           curl -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip cmdline-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools
-          mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest
+          unzip cmdline-tools.zip -d $HOME/android-sdk/cmdline-tools
+          mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
           rm cmdline-tools.zip
 
       - name: Accept licenses
-        run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+        run: yes | sdkmanager --licenses
 
-      - name: Install SDK packages
-        run: |
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "system-images;android-33;google_apis;x86_64" "emulator"
+      - name: Install SDK Packages
+        run: sdkmanager "platform-tools" "platforms;android-33" "system-images;android-33;google_apis;x86_64" "emulator"
 
-      - name: Create emulator
+      - name: Create AVD named Akil3
         run: |
-          echo "no" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager create avd -n test -k "system-images;android-33;google_apis;x86_64" --force
+          echo "no" | avdmanager create avd -n Akil3 -k "system-images;android-33;google_apis;x86_64" --force
 
       - name: Start emulator
         run: |
-          $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-window -no-audio -no-boot-anim &
+          emulator -avd Akil3 -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
           adb wait-for-device
           adb shell input keyevent 82
 
-      - name: Run your Appium tests
+      - name: Run Appium tests
         run: |
-          # Your command to run Appium tests here, e.g.:
           mvn test
 
       - name: Stop emulator
