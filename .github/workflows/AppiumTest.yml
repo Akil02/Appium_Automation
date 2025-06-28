@@ -44,13 +44,17 @@ jobs:
           echo "no" | $HOME/android-sdk/cmdline-tools/latest/bin/avdmanager create avd -n Akil3 -k "system-images;android-33;google_apis;x86_64" --force
 
       - name: Start emulator
-        env:
-          ANDROID_SDK_ROOT: /home/runner/android-sdk
-          PATH: /home/runner/android-sdk/platform-tools:/home/runner/android-sdk/emulator:$PATH
         run: |
+          export ANDROID_SDK_ROOT=$HOME/android-sdk
+          export PATH=$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools:$PATH
+          
           echo "Available AVDs:"
-          emulator -list-avds
-          emulator -avd Akil3 -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
+          $ANDROID_SDK_ROOT/emulator/emulator -list-avds
+
+          echo "Starting emulator..."
+          nohup $ANDROID_SDK_ROOT/emulator/emulator -avd Akil3 -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect > emulator.log 2>&1 &
+          
+          echo "Waiting for device..."
           adb wait-for-device
           adb shell input keyevent 82
 
