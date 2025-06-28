@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  android-test:
+  appium-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
-      - name: Checkout project
+      - name: Checkout source
         uses: actions/checkout@v3
 
       - name: Set up Java 11
@@ -18,41 +18,30 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: Start Android emulator
+      - name: Set up Node.js for Appium
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Appium and UIAutomator2 driver
+        run: |
+          npm install -g appium
+          appium driver install uiautomator2
+
+      - name: Start Android Emulator and run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 33
           target: google_apis
           arch: x86_64
           profile: pixel_3
-          emulator-options: -no-window -no-audio -no-boot-anim -accel off
+          emulator-options: "-no-window -no-audio -no-boot-anim -accel off"
           disable-animations: true
-
-      - name: Install Node.js (for Appium)
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install Appium and drivers
-        run: |
-          npm install -g appium
-          appium driver install uiautomator2
-
-      - name: Start Appium server in background
-        run: |
-          nohup appium --log appium.log > /dev/null 2>&1 &
-
-      - name: Wait for Appium to be ready
-        run: |
-          sleep 15
-          curl http://localhost:4723/wd/hub/status || (echo "Appium not ready!" && exit 1)
-
-      - name: Run Appium tests using Maven
-        run: mvn test
-
-      - name: Upload Appium log (optional for debugging)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: appium-log
-          path: appium.log
+          script: |
+            echo "Starting Appium server"
+            nohup appium --log appium.log > /dev/null 2>&1 &
+            sleep 15
+            echo "Checking Appium is up..."
+            curl http://localhost:4723/wd/hub/status || exit 1
+            echo "Running Maven tests..."
+            mvn test
