@@ -16,12 +16,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y unzip lib32stdc++6 lib32z1 qemu-kvm
 
-      - name: Set environment variables
+      - name: Set ANDROID_SDK_ROOT and PATH
         run: |
-          echo "ANDROID_SDK_ROOT=${HOME}/android-sdk" >> $GITHUB_ENV
-          echo "${HOME}/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
-          echo "${HOME}/android-sdk/platform-tools" >> $GITHUB_PATH
-          echo "${HOME}/android-sdk/emulator" >> $GITHUB_PATH
+          echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "$HOME/android-sdk/emulator" >> $GITHUB_PATH
+          echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
+          echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
       - name: Download Android Command Line Tools
         run: |
@@ -32,17 +32,24 @@ jobs:
           rm cmdline-tools.zip
 
       - name: Accept licenses
-        run: yes | sdkmanager --licenses
+        run: |
+          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
 
       - name: Install SDK Packages
-        run: sdkmanager "platform-tools" "platforms;android-33" "system-images;android-33;google_apis;x86_64" "emulator"
+        run: |
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "system-images;android-33;google_apis;x86_64" "emulator"
 
       - name: Create AVD named Akil3
         run: |
-          echo "no" | avdmanager create avd -n Akil3 -k "system-images;android-33;google_apis;x86_64" --force
+          echo "no" | $HOME/android-sdk/cmdline-tools/latest/bin/avdmanager create avd -n Akil3 -k "system-images;android-33;google_apis;x86_64" --force
 
       - name: Start emulator
+        env:
+          ANDROID_SDK_ROOT: /home/runner/android-sdk
+          PATH: /home/runner/android-sdk/platform-tools:/home/runner/android-sdk/emulator:$PATH
         run: |
+          echo "Available AVDs:"
+          emulator -list-avds
           emulator -avd Akil3 -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
           adb wait-for-device
           adb shell input keyevent 82
@@ -53,5 +60,7 @@ jobs:
 
       - name: Stop emulator
         if: always()
+        env:
+          PATH: /home/runner/android-sdk/platform-tools:/home/runner/android-sdk/emulator:$PATH
         run: |
           adb -s emulator-5554 emu kill
