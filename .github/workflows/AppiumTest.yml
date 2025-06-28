@@ -6,6 +6,7 @@ on:
 jobs:
   android-emulator:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout code
@@ -16,14 +17,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y unzip lib32stdc++6 lib32z1 qemu-kvm
 
-      - name: Set ANDROID_SDK_ROOT and PATH
+      - name: Set Android SDK environment
         run: |
           echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
           echo "$HOME/android-sdk/emulator" >> $GITHUB_PATH
           echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
           echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
-      - name: Download Android Command Line Tools
+      - name: Download Android command line tools
         run: |
           mkdir -p $HOME/android-sdk/cmdline-tools
           curl -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
@@ -32,60 +33,47 @@ jobs:
           rm cmdline-tools.zip
 
       - name: Accept licenses
-        run: |
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+        run: yes | sdkmanager --licenses
 
-      - name: Install SDK Packages
-        run: |
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "system-images;android-33;google_apis;x86_64" "emulator"
+      - name: Install SDK packages
+        run: sdkmanager "platform-tools" "platforms;android-33" "system-images;android-33;google_apis;x86_64" "emulator"
 
       - name: Create AVD named Akil3
         run: |
-          echo "no" | $HOME/android-sdk/cmdline-tools/latest/bin/avdmanager create avd -n Akil3 -k "system-images;android-33;google_apis;x86_64" --force
+          echo "no" | avdmanager create avd -n Akil3 -k "system-images;android-33;google_apis;x86_64" --force
 
-      - name: Start emulator
+      - name: Start Android Emulator
         run: |
           export ANDROID_SDK_ROOT=$HOME/android-sdk
           export PATH=$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools:$PATH
-          
+
           echo "Available AVDs:"
           $ANDROID_SDK_ROOT/emulator/emulator -list-avds
 
-          - name: Start emulator
-  run: |
-    export ANDROID_SDK_ROOT=$HOME/android-sdk
-    export PATH=$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools:$PATH
+          echo "Starting emulator..."
+          nohup $ANDROID_SDK_ROOT/emulator/emulator -avd Akil3 \
+            -no-snapshot \
+            -no-audio \
+            -no-boot-anim \
+            -gpu swiftshader_indirect \
+            -no-window \
+            -accel off > emulator.log 2>&1 &
 
-    echo "Available AVDs:"
-    $ANDROID_SDK_ROOT/emulator/emulator -list-avds
+          echo "Waiting for emulator to boot..."
+          bootanim=""
+          until [[ "$bootanim" == "stopped" ]]; do
+            bootanim=$(adb -e shell getprop init.svc.bootanim 2>/dev/null | tr -d '\r')
+            echo "  → boot status: $bootanim"
+            sleep 5
+          done
 
-    echo "Starting emulator..."
-    nohup $ANDROID_SDK_ROOT/emulator/emulator -avd Akil3 \
-      -no-snapshot \
-      -no-audio \
-      -no-boot-anim \
-      -gpu swiftshader_indirect \
-      -no-window \
-      -accel off \
-      > emulator.log 2>&1 &
-
-    # Wait for emulator to finish booting
-    bootanim=""
-    until [[ "$bootanim" == "stopped" ]]; do
-      bootanim=$(adb -e shell getprop init.svc.bootanim 2>/dev/null | tr -d '\r')
-      echo "Waiting for emulator to finish booting... ($bootanim)"
-      sleep 5
-    done
-
-    adb shell input keyevent 82
+          adb shell input keyevent 82
 
       - name: Run Appium tests
-        run: |
-          mvn test
+        run: mvn test
 
       - name: Stop emulator
         if: always()
-        env:
-          PATH: /home/runner/android-sdk/platform-tools:/home/runner/android-sdk/emulator:$PATH
         run: |
-          adb -s emulator-5554 emu kill
+          export PATH=$HOME/android-sdk/platform-tools:$HOME/android-sdk/emulator:$PATH
+          adb -s emulator-5554 emu kill || echo "Emulator already killed"
